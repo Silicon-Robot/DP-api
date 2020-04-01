@@ -1,5 +1,6 @@
 const router = require('express').Router();
 let User = require('../models/user.model');
+const controllers=require('../controller/user')
 
 router.route('/').get((req, res) => {
     User.find()
@@ -16,4 +17,5 @@ router.route('/add').post((req, res) => {
         .catch(err => res.status(400).json('Error: ' + err));
 });
 
+router.post('/signup',controllers.signup);
 module.exports = router;
