@@ -4,7 +4,8 @@ var nodemailer = require('nodemailer');
 module.exports=(req,res,next)=>{
 	const aleatoire=(N)=> {
 return (Math.floor((N)*Math.random()+1));
-}
+}   
+    let code=aleatoire(100000);
 	const transporter = nodemailer.createTransport({
 	  service: 'gmail',
 	  auth: {
@@ -17,7 +18,7 @@ return (Math.floor((N)*Math.random()+1));
 	  from: 'yourEmail@gmail.com',
 	  to: 'destinationEmail@gmail.com',
 	  subject: 'Sending Email using Node.js',
-	  text:`code is :${aleatoire(100000)}`
+	  text:`code is :${code}`
 	};
 
 	transporter.sendMail(mailOptions, function(error, info){
@@ -26,7 +27,7 @@ return (Math.floor((N)*Math.random()+1));
 	    res.status(400).json({error})
 	  } else {
 	    console.log('Email sent: ' + info.response);
-	    res.status(200).json({message:'mail envoyé',code:aleatoire(100000)})
+	    res.status(200).json({message:'mail envoyé',code:code})
 	  }
 	});
 }
