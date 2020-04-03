@@ -11,14 +11,7 @@ const personnelRoutes = require('./routes/personnel.routes')
 const managePersonnel = require('./controllers/managePersonnel.controller')
 
 
-app.use(cors({
-  methods: ["POST", "GET", "PUT", "DELETE"],
-  allowedHeaders: [
-    "Access-Control-Allow-Origin",
-    "Content-Type",
-    "x-access-token"
-  ]
-}));
+app.use(cors());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
