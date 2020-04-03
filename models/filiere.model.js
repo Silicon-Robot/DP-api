@@ -12,7 +12,7 @@ const filiereSchema = new Schema({
   maxNiveau: {
     type: Number,
     required: true
-  }
+  },
   startDate: {
     type: Date,
     require: true

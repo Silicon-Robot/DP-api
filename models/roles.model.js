@@ -5,19 +5,18 @@ const roleSchema=mongoose.Schema({
 		type:String,
 		required:true
 	},
-	startDate:{
-		type:Date,
-		required:true
-	},
-	history:[
-		{
-			_id:String,
-		   nomRole:String
-		   startDate:Date,			
-		   changeDate:Date,			
-		}]
-	}
-	]
+	// startDate:{
+	// 	type:Date,
+	// 	required:true
+	// },
+	// // history:[
+	// // 	{
+	// // 		_id:String,
+	// // 	   nomRole:String,
+	// // 	   startDate:Date,			
+	// // 	   changeDate:Date,			
+	// // 	}
+	// // ]
 })
 
 module.exports=roleSchema;
