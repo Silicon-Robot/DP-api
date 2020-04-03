@@ -5,7 +5,6 @@ const personnelSchema=mongoose.Schema({
 	matricule:{
 		type:String,
 		required:true,
-		unique:true
 	},
 	nom: {
 		type:String,
@@ -21,7 +20,6 @@ const personnelSchema=mongoose.Schema({
 	},
 	email:{
 		type:String,
-		required:true,
 		unique:true
 	},
   tel:{
