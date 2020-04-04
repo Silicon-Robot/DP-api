@@ -5,6 +5,7 @@ const personnelSchema=mongoose.Schema({
 	matricule:{
 		type:String,
 		required:true,
+		unique:true
 	},
 	nom: {
 		type:String,
@@ -20,6 +21,7 @@ const personnelSchema=mongoose.Schema({
 	},
 	email:{
 		type:String,
+		required:true,
 		unique:true
 	},
   tel:{
@@ -33,7 +35,7 @@ const personnelSchema=mongoose.Schema({
   role:roleSchema,
   history:[{
 	  _id:String,
-		matricule:String,
+		matri:String,
 		nom:String,
 		prenom:String,
 		email:String,

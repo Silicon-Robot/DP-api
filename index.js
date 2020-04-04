@@ -8,7 +8,7 @@ const dbConnect = require('./db.connect');
 
 const handle = require('./handlers')
 const personnelRoutes = require('./routes/personnel.routes')
-const managePersonnel = require('./controllers/managePersonnel.controller')
+const faculty = require('./routes/faculty.routes')
 
 
 app.use(cors());
@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use('/', personnelRoutes)
-app.use('/manage-personnel',managePersonnel)
+app.use('/faculty', faculty)
 
 app.get('/', (req, res) =>{console.log("someone is here"); res.json({ hello: 'world' })});
   

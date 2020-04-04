@@ -1,5 +1,5 @@
 const express = require('express');
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt')
 const nodemailer = require('nodemailer')
@@ -10,6 +10,15 @@ router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json())
 
 const Personnel = require('../models/personnel.model');
+
+
+router.get('/', auth ,function (req, res) {
+  Personnel.find({})
+      .then(users => {
+        res.status(200).json({message:users});
+      })
+      .catch(err => res.status(500).json({ error: err.message }))
+});
 
 router.post('/new', auth ,function (req, res) {
   const { matricule, email, prenom, nom, startDate, nomRole, tel } = req.body;
@@ -65,15 +74,7 @@ router.post('/new', auth ,function (req, res) {
     .catch(err => res.status(500).json({ error: err.message }))
 });
 
-router.get('/', auth ,function (req, res) {
-  Personnel.find({})
-      .then(users => {
-        res.status(200).json({message:users});
-      })
-      .catch(err => res.status(500).json({ error: err.message }))
-});
-
-router.get('/personnel/:id', auth ,function (req, res) {
+router.get('/:id', auth ,function (req, res) {
   Personnel.findById(req.params.id)
       .then(user => {
         res.status(200).json({message:user});
@@ -81,7 +82,7 @@ router.get('/personnel/:id', auth ,function (req, res) {
       .catch(err => res.status(500).json({ error: err.message }) )
 });
 
-router.delete('/delete/:id', auth ,function (req, res) {
+router.delete('/:id/delete', auth ,function (req, res) {
   Personnel.findByIdAndRemove(req.params.id)
       .then(user => {
         res.status(200).json({ message: `User ${user.nom} was deleted`});
@@ -89,7 +90,7 @@ router.delete('/delete/:id', auth ,function (req, res) {
       .catch(err => res.status(500).json({ error: err.message }))
 });
 
-router.put('/update/:id', auth ,async (req, res) => {
+router.put('/:id/update', auth ,async (req, res) => {
   const { id } = req.body;
   const oldUser = await Personnel.findById(id);
   oldUser.history.push({_id,matricule,nom,prenom,email,tel,startDate,role,changeDate: Date.now()})

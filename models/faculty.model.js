@@ -4,8 +4,8 @@ const filiereSchema = require('./filiere.model')
 const Schema = mongoose.Schema;
 
 
-const falcultySchema = new Schema({
-  nomFalculty: {
+const facultySchema = new Schema({
+  nomFaculty: {
     type: String,
     required: true,
     unique: true,
@@ -18,7 +18,7 @@ const falcultySchema = new Schema({
   history: [
   	{
   		_id: String,
-  		nomFalculty: String,
+  		nomFaculty: String,
       filieres: [filiereSchema],
   		startDate: Date,
   		changeDate: Date
@@ -26,6 +26,6 @@ const falcultySchema = new Schema({
   ]
 });
 
-const Falculty = mongoose.model('Falculty', falcultySchema);
+const Faculty = mongoose.model('Faculty', facultySchema);
 
-module.exports = Falculty;
+module.exports = Faculty;

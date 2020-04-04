@@ -9,14 +9,14 @@ const sendMail = (req, res, next) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'yourEmail@gmail.com',
-      pass: 'password'
+      user: process.env.SRC_MAIL,
+      pass: process.env.SRC_MAIL_PWD
     }
   });
 
   const mailOptions = {
-    from: 'yourEmail@gmail.com',
-    to: 'destinationEmail@gmail.com',
+    from: process.env.SRC_MAIL,
+    to: req.body.email,
     subject: 'Comfirmation Code - Reset Password',
     html: `<div style="width: 100vw;height: 100vh;display: flex;flex-direction: column;align-items: center;justify-content: center;">
             <h1 style="font-weight: 300;">Comfirmation Code</h1>
@@ -38,4 +38,4 @@ const sendMail = (req, res, next) => {
 
 
 
-// module.exports = sendMail
+module.exports = sendMail
