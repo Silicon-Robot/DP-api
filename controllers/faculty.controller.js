@@ -9,7 +9,7 @@ router.use(bodyParser.json())
 
 const Faculty = require('../models/faculty.model');
 
-const filiere = require('../models/filiere.controller');
+const filiere = require('../controllers/filiere.controller');
 
 router.use('/:id/filiere', filiere )
 
