@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 const Personnel = require('../models/personnel.model');
 
@@ -12,6 +13,8 @@ const sendMail = (req, res) => {
     .then(user=>{
       if(user){
         const code = GenerateCode()
+        let hashCode = bcrypt.hashSync(String(code),10);
+
         var transporter = nodemailer.createTransport({
           service: 'gmail',
           auth: {
@@ -33,12 +36,13 @@ const sendMail = (req, res) => {
         transporter.sendMail(mailOptions, function (error, info) {
           if (error) {
             console.log(error);
-            res.status(400).json({ error: error })
+            res.status(400).json({ error: error.message })
           } else {
-            console.log('Email sent: ' + info.response);
-            let token = jwt.sign({ id: user._id, code: code }, process.env.JWT_KEY, {
+            console.log('Email sent: ' + info.response,hashCode);
+            let token = jwt.sign({ id: user._id, code: hashCode }, process.env.JWT_KEY, {
               expiresIn: 86400
             });
+            console.log(token)
             res.status(200).json({ message: token })
           }
         });
@@ -47,7 +51,7 @@ const sendMail = (req, res) => {
         res.status(404).json({message: "Email not found"})
       }
     })
-    .catch(err => res.status(500).json({error: err}))
+    .catch(err => res.status(500).json({error: err.message}))
 }
 
 

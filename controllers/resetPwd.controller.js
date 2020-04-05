@@ -5,9 +5,9 @@ const Personnel = require('../models/personnel.model');
 
 const resetPassword = (req, res) => {
   
-  const { email, password } = req.body;
+  const { id, password } = req.body;
 
-  Personnel.findOne({email})
+  Personnel.findById(id)
   .then(user => { 
     if (!user) return res.status(404).json('user not found');
 
@@ -17,14 +17,11 @@ const resetPassword = (req, res) => {
 
     user.save()
     .then(user=>{
-      let token = jwt.sign({ user: user }, process.env.JWT_KEY, { expiresIn: 86400 })
-
-      res.status(200).json({ auth: true, token: token })
+      res.status(200).json({message: "successfull reset"})
     })
-    .catch(err => res.status(500).json({ error: err }))
+    .catch(err =>{ console.log(err.message);res.status(500).json({ error: "failed to reset" })})
   })
-  .catch(err => res.status(404).json({error: err}))
+  .catch(err =>{ console.log(err.message); res.status(404).json({error: "failed to reset"})})
 };
 
 module.exports = resetPassword;
-
