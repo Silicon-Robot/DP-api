@@ -18,13 +18,13 @@ const sendMail = (req, res) => {
         var transporter = nodemailer.createTransport({
           service: 'gmail',
           auth: {
-            user: process.env.SRC_EMAIL,
+            user: "devwithangelo@gmail.com",
             pass: process.env.SRC_PWD
           }
         });
 
         var mailOptions = {
-          from: `"eSchool Learning" ${process.env.SRC_EMAIL}`,
+          from: `"eSchool Learning" ${"devwithangelo@gmail.com"}`,
           to: req.body.email,
           subject: 'Comfirmation Code - Reset Password',
           html: `<div>
