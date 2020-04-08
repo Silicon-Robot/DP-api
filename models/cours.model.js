@@ -23,7 +23,7 @@ const coursSchema=mongoose.Schema({
       startDate: Date,
       changeDate: Date,
       codeDuCours: Number,
-      nomCours: String   	
+      nomCours: String,   	
       natureCours: [natureCoursSchema], 
     }
   ]

@@ -7,7 +7,10 @@ const classeSchema = new Schema({
   idFiliere: {
     type: String,
     required: true,
-    unique: true,
+  },
+  nomClasse:{
+    type: String,
+    required: true,
   },
   niveau: {
   	type: Number,
@@ -23,7 +26,6 @@ const classeSchema = new Schema({
   	}
   ]
 });
-
 const Classe = mongoose.model('Classe', classeSchema);
 
 module.exports = Classe;

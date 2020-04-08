@@ -13,7 +13,7 @@ const filiere = require('../controllers/filiere.controller');
 
 router.use('/:id/filiere', filiere )
 
-router.get('/', auth, function (req, res) {
+router.get('/', function (req, res) {
   Faculty.find()
     .then(facultx => {
       res.status(200).json({ message: facultx });
@@ -21,9 +21,8 @@ router.get('/', auth, function (req, res) {
     .catch(err => res.status(500).json({ error: err.message }))
 });
 
-router.post('/new', auth, function (req, res) {
+router.post('/new', function (req, res) {
   const { nomFaculty, filieres, startDate } = req.body;
-
       const Fac = new Faculty({
         nomFaculty,
         startDate,
@@ -37,7 +36,7 @@ router.post('/new', auth, function (req, res) {
 });
 
 
-router.get('/:id', auth, function (req, res) {
+router.get('/:id', function (req, res) {
   Faculty.findById(req.params.id)
     .then(faculty => {
       res.status(200).json({ message: faculty });
@@ -53,7 +52,7 @@ router.delete('/:id/delete', auth, function (req, res) {
     .catch(err => res.status(500).json({ error: err.message }))
 });
 
-router.put('/:id/update', auth, async (req, res) => {
+router.put('/:id/update', async (req, res) => {
   const { id } = req.params;
   const oldFaculty = await Faculty.findById(id);
   const { nomFaculty, filieres, startDate } = oldFaculty;

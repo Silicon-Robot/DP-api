@@ -9,6 +9,7 @@ const dbConnect = require('./db.connect');
 const handle = require('./handlers')
 const personnelRoutes = require('./routes/personnel.routes')
 const faculty = require('./routes/faculty.routes')
+const coordonnateur = require('./routes/coordonnateur.routes')
 
 
 app.use(cors());
@@ -18,6 +19,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use('/', personnelRoutes)
 app.use('/faculty', faculty)
+app.use('/coordo', coordonnateur)
 
 app.get('/', (req, res) =>{console.log("someone is here"); res.json({ hello: 'world' })});
   
