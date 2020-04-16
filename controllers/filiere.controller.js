@@ -10,12 +10,16 @@ const Faculty = require('../models/faculty.model')
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json())
 
-router.get('/', function (req, res) {
+router.get('/', auth, function (req, res) {
+  if (req.role !== "secretaire") return res.status(502).json({ error: "auth failed" })
+
   Faculty.findById(req.params.id)
     .then(faculty=> res.status(200).json({message: faculty}))
     .catch(err=> res.status(200).json({error: err}))
 });
-router.post('/new', function (req, res) {
+router.post('/new', auth, function (req, res) {
+  if (req.role !== "secretaire") return res.status(502).json({ error: "auth failed" })
+
   const  { nomFiliere, maxNiveau, startDate } = req.body
   async function start() {
     try {
@@ -44,7 +48,9 @@ router.post('/new', function (req, res) {
 });
 
 
-router.get('/:idFiliere', function (req, res) {
+router.get('/:idFiliere', auth, function (req, res) {
+  if (req.role !== "secretaire") return res.status(502).json({ error: "auth failed" })
+
   console.log(req.params)
   Faculty.findById(req.params.id)
     .then(faculty => {
@@ -54,7 +60,9 @@ router.get('/:idFiliere', function (req, res) {
     .catch(err => res.status(500).json({ error: err.message }))
 });
 
-router.delete('/:idFiliere/delete', function (req, res) {
+router.delete('/:idFiliere/delete', auth, function (req, res) {
+  if (req.role !== "secretaire") return res.status(502).json({ error: "auth failed" })
+
   Faculty.findById(req.params.id)
     .then(faculty => {
       let Filieres = faculty.filieres.filter((filiere)=>{
@@ -74,6 +82,8 @@ router.delete('/:idFiliere/delete', function (req, res) {
 });
 
 // router.delete('/:id/delete', auth, function (req, res) {
+  // if (req.role !== "secretaire") return res.status(502).json({ error: "auth failed" })
+
 //   Faculty.findByIdAndRemove(req.params.id)
 //     .then(faculty => {
 //       res.status(200).json({ message: `faculty ${faculty.nomFaculty} was deleted` });
@@ -81,7 +91,7 @@ router.delete('/:idFiliere/delete', function (req, res) {
 //     .catch(err => res.status(500).json({ error: err.message }))
 // });
 
-router.put('/:idFiliere/update', async (req, res) => {
+router.put('/:idFiliere/update',auth, async (req, res) => {
   const { idFiliere,id } = req.params;
   const oldFaculty = await Faculty.findById(id);
   const { filieres } = oldFaculty;

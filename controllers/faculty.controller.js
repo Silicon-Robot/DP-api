@@ -16,7 +16,9 @@ const Classe = require('../models/classe.model');
 
 // router.use('/:idFaculty/filiere', filiere )
 
-router.get('/', function (req, res) {
+router.get('/', auth, function (req, res) {
+  if (req.role !== "secretaire") return res.status(502).json({ error: "auth failed" })
+
   Faculty.find()
     .then(facultx => {
       res.status(200).json({ message: facultx });
@@ -24,7 +26,9 @@ router.get('/', function (req, res) {
     .catch(err => res.status(500).json({ error: err.message }))
 });
 
-router.post('/new', function (req, res) {
+router.post('/new', auth, function (req, res) {
+  if (req.role !== "secretaire") return res.status(502).json({ error: "auth failed" })
+
   const { nomFaculty, filieres, startDate } = req.body;
   let facID = 0;
   console.log(req.body)
@@ -58,6 +62,8 @@ router.post('/new', function (req, res) {
 
 
 // router.get('/:idFaculty', function (req, res) {
+  // if (req.role !== "secretaire") return res.status(502).json({ error: "auth failed" })
+
 //   Faculty.findById(req.params.idFaculty)
 //     .then(faculty => {
 //       res.status(200).json({ message: faculty });
@@ -65,7 +71,9 @@ router.post('/new', function (req, res) {
 //     .catch(err => res.status(500).json({ error: err.message }))
 // });
 
-router.delete('/:idFaculty/delete', async function (req, res) {
+router.delete('/:idFaculty/delete', auth,async function (req, res) {
+  if (req.role !== "secretaire") return res.status(502).json({ error: "auth failed" })
+
   const Fac = await Faculty.findById(req.params.idFaculty).then(faculty=>faculty).catch(err=>console.log(err.message))
   
   const start = async () => {

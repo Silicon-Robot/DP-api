@@ -18,19 +18,19 @@ const sendMail = (req, res) => {
         var transporter = nodemailer.createTransport({
           service: 'gmail',
           auth: {
-            user: "angelodiepe10@gmail.com",
-            pass: "695151114"
+            user: process.env.EMAIL,
+            pass: process.env.PWD
           }
         });
 
         var mailOptions = {
-          from: `"eSchool Learning" angelodiepe10@gmail.com`,
+          from: `"eSchool Learning" <${process.env.EMAIL}>`,
           to: req.body.email,
           subject: 'Comfirmation Code - Reset Password',
           html: `<div>
                     <h1>Comfirmation Code</h1>
                     <br/>
-                    <h3><b>${code}</b></h3>
+                    <h3><b><u>${code}</u></b></h3>
                   </div>`
         };
         transporter.sendMail(mailOptions, function (error, info) {

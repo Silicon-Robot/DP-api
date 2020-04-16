@@ -16,7 +16,7 @@ const cour = require('../controllers/cour.controller');
 router.use('/cour', cour)
 
 router.get('/', auth ,function (req, res) {
-  if (req.role !== "secretaire") res.status(502).json({ error: "auth failed" })
+  if (req.role !== "secretaire") return res.status(502).json({ error: "auth failed" })
   Module.find()
     .then(modules => {
       res.status(200).json({ message: modules });
@@ -25,7 +25,7 @@ router.get('/', auth ,function (req, res) {
 });
 
 router.get('/users-courses-modules', auth, async function (req, res) {
-  if (req.role !== "secretaire") res.status(502).json({ error: "auth failed" })
+  if (req.role !== "secretaire") return res.status(502).json({ error: "auth failed" })
   const users = await Personnel.find()
   const courses = await Cour.find()
   const modules = await Module.find()
@@ -33,7 +33,7 @@ router.get('/users-courses-modules', auth, async function (req, res) {
 });
 
 router.post('/new', auth ,function (req, res) {
-  if (req.role !== "secretaire") res.status(502).json({ error: "auth failed" })
+  if (req.role !== "secretaire") return res.status(502).json({ error: "auth failed" })
   console.log('passing here new module', req.body.newModule.cours)
   const { newModule, coursArray } = req.body;
   let modID = 0;
@@ -77,7 +77,7 @@ router.post('/new', auth ,function (req, res) {
 })
 
 router.get('/:idModule', auth ,function (req, res) {
-  if (req.role !== "secretaire") res.status(502).json({ error: "auth failed" })
+  if (req.role !== "secretaire") return res.status(502).json({ error: "auth failed" })
   Module.findById(req.params.idModule)
     .then(module => {
       res.status(200).json({ message: module });
@@ -86,7 +86,7 @@ router.get('/:idModule', auth ,function (req, res) {
   });
 
 router.get('/from-class/:idClasse', auth ,function (req, res) {
-  if (req.role !== "secretaire") res.status(502).json({ error: "auth failed" })
+  if (req.role !== "secretaire") return res.status(502).json({ error: "auth failed" })
   Module.find({idClasse: req.params.idClasse})
     .then(modules => {
       res.status(200).json({ message: modules });
@@ -95,7 +95,7 @@ router.get('/from-class/:idClasse', auth ,function (req, res) {
 });
 
 router.delete('/:idModule/delete', auth ,function (req, res) {
-  if (req.role !== "secretaire") res.status(502).json({ error: "auth failed" })
+  if (req.role !== "secretaire") return res.status(502).json({ error: "auth failed" })
   Module.findByIdAndRemove(req.params.idModule)
     .then(module => {
       res.status(200).json({ message: `Module ${module.nomModule} was deleted` });
@@ -104,7 +104,7 @@ router.delete('/:idModule/delete', auth ,function (req, res) {
 });
 
 router.put('/:idModule/updateauth ,', auth, async (req, res) => {
-  if (req.role !== "secretaire") res.status(502).json({ error: "auth failed" })
+  if (req.role !== "secretaire") return res.status(502).json({ error: "auth failed" })
   const { idModule } = req.params;
   const oldModule = await Module.findById(idModule);
   const { codeModule, nomModule, poids, idClasse, startDate, cours} = oldClasse;

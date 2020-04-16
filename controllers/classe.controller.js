@@ -10,7 +10,7 @@ router.use(bodyParser.json())
 const Classe = require('../models/classe.model');
 
 
-router.get('/', function (req, res) {
+router.get('/', auth, function (req, res) {
   Classe.find()
     .then(classes => {
       res.status(200).json({ message: classes });
@@ -18,7 +18,7 @@ router.get('/', function (req, res) {
     .catch(err => res.status(500).json({ error: err.message }))
 });
 
-router.post('/new', function (req, res) {
+router.post('/new', auth, function (req, res) {
   const { idFiliere, nomClasse, niveau } = req.body;
   const Class = new Classe({
     idFiliere,
@@ -33,7 +33,7 @@ router.post('/new', function (req, res) {
 });
 
 
-router.get('/:id', function (req, res) {
+router.get('/:id', auth, function (req, res) {
   Classe.findById(req.params.id)
     .then(classe => {
       res.status(200).json({ message: classe });
@@ -49,7 +49,7 @@ router.delete('/:id/delete', auth, function (req, res) {
     .catch(err => res.status(500).json({ error: err.message }))
 });
 
-router.put('/:id/update', async (req, res) => {
+router.put('/:id/update', auth, async (req, res) => {
   const { id } = req.params;
   const oldClasse = await Classe.findById(id);
   const { nomClasse, filieres, startDate } = oldClasse;

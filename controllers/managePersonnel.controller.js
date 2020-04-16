@@ -23,9 +23,11 @@ router.get('/', auth ,function (req, res) {
 });
 
 router.post('/new', auth ,function (req, res) {
+  console.log('passing here')
+  if (req.role !== "secretaire") return res.status(502).json({ error: "auth failed" })
 
   const { matricule, email, prenom, nom, startDate, nomRole, tel } = req.body;
-
+  console.log(req.body)
   bcrypt.hash("password1231", 10)
   .then(hash => {
     const User = new Personnel({
@@ -46,18 +48,21 @@ router.post('/new', auth ,function (req, res) {
           const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-              user: 'yourEmail@gmail.com',
-              pass: 'password'
+              user: process.env.EMAIL,
+              pass: process.env.PWD
             }
           });
-
+          console.log(user)
           const mailOptions = {
-            from: 'yourEmail@gmail.com',
+            from: `"eSchool Learning "<${process.env.EMAIL}>`,
             to: email,
             subject: 'Your Password',
             html: `<div style="width: 100vw;height: 100vh;display: flex;flex-direction: column;align-items: center;justify-content: center;">
             <h1 style="font-weight: 300;">Password</h1>
+            <br/>
             <span><b>${"password1231"}</b></span>
+            <br/>
+            <span><i>Please don't to change your default password when signed in</i></span>
           </div>`
           };
 
@@ -67,10 +72,10 @@ router.post('/new', auth ,function (req, res) {
               res.status(400).json({ error: error })
             } else {
               console.log('Email sent: ' + info.response);
-              res.status(200).json({ message: "password sent" })
+              console.log({ message: "password sent" })
+              return res.status(200).json({ message: user})
             }
           });
-          res.status(200).json({ message: `User ${user.nom} was created` })
         })
         .catch(err => res.status(500).json({ error: err.message }))
     })
@@ -78,6 +83,8 @@ router.post('/new', auth ,function (req, res) {
 });
 
 router.get('/:id', auth ,function (req, res) {
+  if (req.role !== "secretaire") return res.status(502).json({ error: "auth failed" })
+
   Personnel.findById(req.params.id)
       .then(user => {
         res.status(200).json({message:user});
@@ -86,6 +93,8 @@ router.get('/:id', auth ,function (req, res) {
 });
 
 router.delete('/:id/delete', auth ,function (req, res) {
+  if (req.role !== "secretaire") return res.status(502).json({ error: "auth failed" })
+
   Personnel.findByIdAndRemove(req.params.id)
       .then(user => {
         res.status(200).json({ message: `User ${user.nom} was deleted`});
@@ -94,6 +103,8 @@ router.delete('/:id/delete', auth ,function (req, res) {
 });
 
 router.put('/:id/update', auth ,async (req, res) => {
+  if (req.role !== "secretaire") return res.status(502).json({ error: "auth failed" })
+
   const { id } = req.body;
   const oldUser = await Personnel.findById(id);
   oldUser.history.push({_id,matricule,nom,prenom,email,tel,startDate,role,changeDate: Date.now()})
