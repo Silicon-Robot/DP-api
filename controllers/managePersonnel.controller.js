@@ -49,7 +49,7 @@ router.post('/new', auth ,function (req, res) {
             service: 'gmail',
             auth: {
               user: process.env.EMAIL,
-              pass: process.env.PWD
+              pass: process.env.PASSWORD
             }
           });
           console.log(user)
