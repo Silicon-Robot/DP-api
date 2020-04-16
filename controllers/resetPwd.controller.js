@@ -2,7 +2,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Personnel = require('../models/personnel.model');
 
-
 const resetPassword = (req, res) => {
   
   const { id, password } = req.body;
