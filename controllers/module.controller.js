@@ -29,7 +29,6 @@ router.get('/users-courses-modules', auth, async function (req, res) {
   const users = await Personnel.find()
   const courses = await Cour.find()
   const modules = await Module.find()
-  if (users & courses & modules) res.status(500).json({ error: "couldn't fetch personnel | cours | modules " })
   res.status(200).json({message: {users,courses,modules}})
 });
 
