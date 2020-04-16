@@ -13,6 +13,7 @@ const Personnel = require('../models/personnel.model');
 
 
 router.get('/', auth ,function (req, res) {
+  if (req.role !== "secretaire") res.status(502).json({ error: "auth failed" })
   Personnel.find({})
       .then(users => {
         res.status(200).json({message:users});
@@ -21,6 +22,7 @@ router.get('/', auth ,function (req, res) {
 });
 
 router.post('/new', auth ,function (req, res) {
+  
   const { matricule, email, prenom, nom, startDate, nomRole, tel } = req.body;
 
   bcrypt.hash("password1231", 10)

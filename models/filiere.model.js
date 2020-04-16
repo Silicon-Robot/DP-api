@@ -6,8 +6,7 @@ const Schema = mongoose.Schema;
 const filiereSchema = new Schema({
   nomFiliere: {
     type: String,
-    required: true,
-    unique: true,
+    required: true
   },
   maxNiveau: {
     type: Number,

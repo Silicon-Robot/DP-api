@@ -6,18 +6,15 @@ const transaction = new Transaction();
 
 const auth = require('../middlewares/auth');
 const Faculty = require('../models/faculty.model')
-const Classe = require('../models/classe.model')
 
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json())
-
 
 router.get('/', function (req, res) {
   Faculty.findById(req.params.id)
     .then(faculty=> res.status(200).json({message: faculty}))
     .catch(err=> res.status(200).json({error: err}))
 });
-
 router.post('/new', function (req, res) {
   const  { nomFiliere, maxNiveau, startDate } = req.body
   async function start() {
@@ -58,7 +55,6 @@ router.get('/:idFiliere', function (req, res) {
 });
 
 router.delete('/:idFiliere/delete', function (req, res) {
-  console.log(req.params)
   Faculty.findById(req.params.id)
     .then(faculty => {
       let Filieres = faculty.filieres.filter((filiere)=>{
@@ -71,9 +67,8 @@ router.delete('/:idFiliere/delete', function (req, res) {
       })
       faculty.filieres = Filieres
       faculty.save()
-        .then(res.status(200).json({ message: `filiere ${nomFiliere} was created` }))
+        .then(res.status(200).json({ message: `filiere ${currentFil.nomFiliere} was deleted` }))
         .catch(err=>res.status(500).json({ error: err.message }))
-      ;
     })
     .catch(err => res.status(500).json({ error: err.message }))
 });
@@ -86,18 +81,26 @@ router.delete('/:idFiliere/delete', function (req, res) {
 //     .catch(err => res.status(500).json({ error: err.message }))
 // });
 
-// router.put('/:id/update', auth, async (req, res) => {
-//   const { id } = req.params;
-//   const oldFaculty = await Faculty.findById(id);
-//   const { nomFaculty, filieres, startDate } = oldFaculty;
+router.put('/:idFiliere/update', async (req, res) => {
+  const { idFiliere,id } = req.params;
+  const oldFaculty = await Faculty.findById(id);
+  const { filieres } = oldFaculty;
+  const newFilieres = filieres.map(filiere=>{
+    if (filiere._id == idFiliere) {
+      var { nomFiliere, maxNiveau, startDate } = filiere;
+      filiere.history.push({ nomFiliere, maxNiveau, startDate, changeDate: Date.now()})
+      return { ...filiere,...req.body }
+    }
+    return filiere
+  })
 
-//   oldFaculty.history.push({ nomFaculty, filieres, startDate, changeDate: Date.now() })
+  oldFaculty.filieres = newFilieres;
 
-//   Faculty.findOneAndUpdate({ id }, { ...req.body, history: oldfaculty.history }, { new: true })
-//     .then(faculty => {
-//       res.status(200).json({ message: `faculty ${faculty.nomFaculty} was updated` });
-//     })
-//     .catch(err => res.status(500).json({ error: err.message }))
-// });
+  Faculty.findOneAndUpdate({ id }, { ...oldFaculty }, { new: true })
+    .then(faculty => {
+      res.status(200).json({ message: `filiere ${nomFiliere} was updated` });
+    })
+    .catch(err => res.status(500).json({ error: err.message }))
+});
 
 module.exports = router;

@@ -19,7 +19,7 @@ const facultySchema = new Schema({
   	{
   		_id: String,
   		nomFaculty: String,
-      filieres: [filiereSchema],
+      filieres: [],
   		startDate: Date,
   		changeDate: Date
   	}
