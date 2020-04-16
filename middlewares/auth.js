@@ -12,7 +12,7 @@ const auth = (req, res, next) => {
         return res.status(500).send({ auth: false, message: 'Failed to authenticate token' });
   
       req.userId = decoded.user._id;
-      req.role = decoded.user.role;
+      req.role = decoded.user.role.nomRole;
       next();
     });
   } catch (error) {
