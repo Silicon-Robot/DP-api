@@ -10,6 +10,8 @@ router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json())
 
 const Personnel = require('../models/personnel.model');
+const Classe = require('../models/classe.model');
+const Faculty = require('../models/faculty.model');
 
 
 router.get('/', auth ,function (req, res) {
@@ -22,6 +24,13 @@ router.get('/', auth ,function (req, res) {
       .catch(err => res.status(500).json({ error: err.message }))
 });
 
+router.get('/users-classes-faculties', auth, async function (req, res) {
+  if (req.role !== "secretaire") return res.status(502).json({ error: "auth failed" })
+  const users = await Personnel.find()
+  const classes = await Classe.find()
+  const faculties = await Faculty.find()
+  res.status(200).json({ message: { users, classes, faculties } })
+});
 router.post('/new', auth ,function (req, res) {
   console.log('passing here')
   if (req.role !== "secretaire") return res.status(502).json({ error: "auth failed" })
