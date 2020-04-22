@@ -3,13 +3,17 @@ const router = express.Router({ mergeParams: true });
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt')
 const nodemailer = require('nodemailer')
+const Transaction = require("mongoose-transactions");
+const transaction = new Transaction();
 
 const auth = require('../middlewares/auth');
 
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json())
 
+
 const Personnel = require('../models/personnel.model');
+const Coordonnateur = require('../models/coordonnateur.model');
 const Classe = require('../models/classe.model');
 const Faculty = require('../models/faculty.model');
 
@@ -25,6 +29,7 @@ router.get('/', auth ,function (req, res) {
 });
 
 router.get('/users-classes-faculties', auth, async function (req, res) {
+  console.log("passing here")
   if (req.role !== "secretaire") return res.status(502).json({ error: "auth failed" })
   const users = await Personnel.find()
   const classes = await Classe.find()
@@ -35,7 +40,7 @@ router.post('/new', auth ,function (req, res) {
   console.log('passing here')
   if (req.role !== "secretaire") return res.status(502).json({ error: "auth failed" })
 
-  const { matricule, email, prenom, nom, startDate, nomRole, tel } = req.body;
+  const { matricule, email, prenom, nom, startDate, role, tel } = req.body;
   console.log(req.body)
   bcrypt.hash("password1231", 10)
   .then(hash => {
@@ -47,13 +52,22 @@ router.post('/new', auth ,function (req, res) {
       prenom,
       tel,
       startDate,
-      role: {
-        nomRole,
-        startDate
-      }
+      role
     })
     User.save()
         .then(user => {
+          if(req.body.classes){
+            const Coordo = new Coordonnateur({
+              idPersonnel: user._id,
+              classes: req.body.classes,
+            })
+            Coordo.save()
+            .then(coordo=>(coordo)?console.log("Coordo created"):console.log("coordo not created"))
+            .catch(err=>{
+              Personnel.findByIdAndDelete(user._id)
+              .then(data=>res.status(500).json({error: err + "+ personnel" + nom + " deleted"}))
+            })
+          }
           const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -78,7 +92,7 @@ router.post('/new', auth ,function (req, res) {
           transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
               console.log(error);
-              res.status(400).json({ error: error })
+              return res.status(400).json({ error: error })
             } else {
               console.log('Email sent: ' + info.response);
               console.log({ message: "password sent" })
@@ -113,16 +127,35 @@ router.delete('/:id/delete', auth ,function (req, res) {
 
 router.put('/:id/update', auth ,async (req, res) => {
   if (req.role !== "secretaire") return res.status(502).json({ error: "auth failed" })
-
-  const { id } = req.body;
-  const oldUser = await Personnel.findById(id);
+  const { id } = req.params;
+  const oldUser = await Personnel.findById(id)
+  
+  const oldCoordo = await Coordonnateur.findOne({idPersonnel:id});
+  console.log(oldCoordo,oldUser)
+  let { _id, matricule, nom, prenom, email, tel, startDate, role } = oldUser;
   oldUser.history.push({_id,matricule,nom,prenom,email,tel,startDate,role,changeDate: Date.now()})
+   
+  const start = async () => {
+    try {
+      let { matricule, nom, prenom, email, tel, role } = req.body;
+      transaction.update("Personnel",id,{matricule,nom,prenom,email,tel,role,history: oldUser.history})
+      if(oldCoordo & req.body.classes){
+        let { _id, classes, horaire, startDate } = oldCoordo
+        oldCoordo.history.push({_id,classes,horaire,startDate,changeDate: Date.now()})
+        transaction.update("Coordonnateur",_id,{classes: req.body.classe, history:oldCoordo.history})
+        console.log('Is a coordo')
+      }
+      const final = await transaction.run();
+      res.status(200).json({ message: `Personnel was updated` })
+    } catch (error) {
+      console.error(error);
+      await transaction.rollback().catch(console.error);
+      transaction.clean();
+      res.status(500).json({ error: error })
+    }
+  }
 
-  Personnel.findOneAndUpdate({id}, {...req.body, history: oldUser.history }, { new: true }) 
-      .then(user => {
-        res.status(200).json({message: `User ${user.nom} was updated`});
-      })
-      .catch(err => res.status(500).json({ error: err.message }))
+  start();
 });
 
 module.exports = router;

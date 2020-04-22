@@ -17,9 +17,7 @@ console.log(req.body)
       prenom,
       tel,
       startDate,
-      role: {
-        nomRole
-      }
+      role:nomRole
     })
     User.save()
     .then(user => {

@@ -14,7 +14,7 @@ const signIn = (req,res) => {
     }
     let passwordIsValid = bcrypt.compareSync(password, user.hash);
 
-    if (!passwordIsValid) return res.status(401).json({ message: {auth: false, token: null }});
+    if (!passwordIsValid) return res.status(401).json({ error: {auth: false, token: null }});
 
     let token = jwt.sign({ user: user }, process.env.JWT_KEY, {
       expiresIn: 86400

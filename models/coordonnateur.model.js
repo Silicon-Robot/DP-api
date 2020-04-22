@@ -8,6 +8,7 @@ const coordonnateurSchema = new Schema({
   idPersonnel: {
     type: String,
     required: true,
+    unique: true
   },
   classes: [String],
   horaire:horaireSchema,
