@@ -10,18 +10,29 @@ const coordonnateurSchema = new Schema({
     required: true,
     unique: true
   },
+  matriculePersonnel: {
+    type: String,
+    required: true,
+    unique: true
+  },
   classes: [String],
-  horaire:horaireSchema,
   startDate: {
     type: Date,
     require: true
   },
+  timetables: [
+    {
+      classe: String,
+      timetable:{}
+    }
+  ],
   history: [
   	{
   		_id: String,
   		idPersonnel: String,
+  		matriculePersonnel: String,
       classes: [String],
-      horaire:horaireSchema,
+      timetables: [],
   		startDate: Date,
   		changeDate: Date
   	}

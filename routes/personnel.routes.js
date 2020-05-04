@@ -5,6 +5,7 @@ const auth = require('../middlewares/auth')
 
 const signUp = require('../controllers/signUp.controller');
 const signIn = require('../controllers/signIn.controller');
+const signInToken = require('../controllers/signInToken.controller');
 const resetPwd = require('../controllers/resetPwd.controller');
 const sendMail = require('../controllers/sendMail.controller');
 
@@ -15,6 +16,8 @@ router.use('/manage-personnel', managePersonnel)
 router.post('/signup',(req, res)=> signUp(req, res))
 
 router.post('/signin',(req, res)=> signIn(req, res))
+
+router.post('/signin-token',(req, res)=> signInToken(req, res))
 
 router.put('/reset-password',auth,(req, res)=> resetPwd(req, res))
 

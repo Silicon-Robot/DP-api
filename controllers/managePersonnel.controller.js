@@ -59,7 +59,9 @@ router.post('/new', auth ,function (req, res) {
           if(req.body.classes){
             const Coordo = new Coordonnateur({
               idPersonnel: user._id,
+              matriculePersonnel: user.matricule,
               classes: req.body.classes,
+              timetables: req.body.classes.map(classe=>{return{classe: classe, timetable:{}}})
             })
             Coordo.save()
             .then(coordo=>(coordo)?console.log("Coordo created"):console.log("coordo not created"))
@@ -96,9 +98,9 @@ router.post('/new', auth ,function (req, res) {
             } else {
               console.log('Email sent: ' + info.response);
               console.log({ message: "password sent" })
-              return res.status(200).json({ message: user})
             }
           });
+          return res.status(200).json({ message: user})
         })
         .catch(err => res.status(500).json({ error: err.message }))
     })
@@ -115,14 +117,26 @@ router.get('/:id', auth ,function (req, res) {
       .catch(err => res.status(500).json({ error: err.message }) )
 });
 
-router.delete('/:id/delete', auth ,function (req, res) {
+router.delete('/:id/delete', auth ,async function (req, res) {
   if (req.role !== "secretaire") return res.status(502).json({ error: "auth failed" })
+  let idCoordo = await Coordonnateur.findOne({idPersonnel: req.params.id}).then(coordo=>coordo?coordo._id:null)
+  const start = async () => {
+    try {
+      transaction.remove('Personnel',req.params.id);
+      if (idCoordo) transaction.remove('Coordonnateur',idCoordo) 
+      
+      const final = await transaction.run();
+      res.status(200).json({ message: `User was deleted` })
+    } catch (error) {
+      console.error(error);
+      await transaction.rollback().catch(console.error);
+      transaction.clean();
+      res.status(500).json({ error: error })
+    }
+  }
 
-  Personnel.findByIdAndRemove(req.params.id)
-      .then(user => {
-        res.status(200).json({ message: `User ${user.nom} was deleted`});
-      })
-      .catch(err => res.status(500).json({ error: err.message }))
+  start();
+
 });
 
 router.put('/:id/update', auth ,async (req, res) => {
@@ -131,7 +145,7 @@ router.put('/:id/update', auth ,async (req, res) => {
   const oldUser = await Personnel.findById(id)
   
   const oldCoordo = await Coordonnateur.findOne({idPersonnel:id});
-  console.log(oldCoordo,oldUser)
+
   let { _id, matricule, nom, prenom, email, tel, startDate, role } = oldUser;
   oldUser.history.push({_id,matricule,nom,prenom,email,tel,startDate,role,changeDate: Date.now()})
    
@@ -139,11 +153,12 @@ router.put('/:id/update', auth ,async (req, res) => {
     try {
       let { matricule, nom, prenom, email, tel, role } = req.body;
       transaction.update("Personnel",id,{matricule,nom,prenom,email,tel,role,history: oldUser.history})
-      if(oldCoordo & req.body.classes){
-        let { _id, classes, horaire, startDate } = oldCoordo
-        oldCoordo.history.push({_id,classes,horaire,startDate,changeDate: Date.now()})
-        transaction.update("Coordonnateur",_id,{classes: req.body.classe, history:oldCoordo.history})
-        console.log('Is a coordo')
+      console.log('Is a coordo')
+      if(oldCoordo && req.body.classe){
+        console.log(req.body.classe)
+        let { _id, idPersonnel, matriculePersonnel, classes, timetables, startDate } = oldCoordo
+        oldCoordo.history.push({ _id, classes, idPersonnel, matriculePersonnel, timetables, startDate,changeDate: Date.now()})
+        transaction.update("Coordonnateur", _id, {classes: req.body.classe, history:oldCoordo.history})
       }
       const final = await transaction.run();
       res.status(200).json({ message: `Personnel was updated` })

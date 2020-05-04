@@ -103,11 +103,11 @@ router.delete('/:idModule/delete', auth ,function (req, res) {
     .catch(err => res.status(500).json({ error: err.message }))
 });
 
-router.put('/:idModule/updateauth ,', auth, async (req, res) => {
+router.put('/:idModule/update', auth, async (req, res) => {
   if (req.role !== "secretaire") return res.status(502).json({ error: "auth failed" })
   const { idModule } = req.params;
   const oldModule = await Module.findById(idModule);
-  const { codeModule, nomModule, poids, idClasse, startDate, cours} = oldClasse;
+  const { codeModule, nomModule, poids, idClasse, startDate, cours} = oldModule;
 
   oldModule.history.push({ codeModule, nomModule, poids, idClasse, cours, startDate, changeDate: Date.now() })
 

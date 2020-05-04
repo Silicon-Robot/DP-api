@@ -1,24 +1,40 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
 const Personnel = require('../models/personnel.model')
+const Etudiant = require('../models/etudiant.model')
 
 
 const signUp = (req, res) => {
 
-  const { matricule, email, prenom, nom, startDate, nomRole, tel, password } = req.body;
-console.log(req.body)
+  const { matricule, email, prenom, nom, startDate, tel, role, password } = req.body;
+  console.log(req.body)
   bcrypt.hash(password, 10)
   .then(hash => {
-    const User = new Personnel({
-      hash,
-      matricule,
-      email,
-      nom,
-      prenom,
-      tel,
-      startDate,
-      role:nomRole
-    })
+    if(req.body.idClasse){
+      var User = new Etudiant({
+        hash,
+        matricule,
+        email,
+        nom,
+        prenom,
+        tel,
+        startDate,
+        idClasse: req.body.idClasse,
+        role
+      })
+    }
+    else{
+      var User = new Personnel({
+        hash,
+        matricule,
+        email,
+        nom,
+        prenom,
+        tel,
+        startDate,
+        role
+      })
+    }
     User.save()
     .then(user => {
       if(!user) {
