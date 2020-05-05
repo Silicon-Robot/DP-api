@@ -31,13 +31,13 @@ router.get('/', auth, async function (req, res) {
 });
 router.put('/:idNote/publish', auth, async (req, res) => {
   if (req.role !== "coordonnateur") return res.status(502).json({ error: "auth failed" })
-  const { idNote } = req.params;
+  const { idNote } = req.params ;
   const oldNote = await Note.findById(idNote);
-  const { _id, idEtudiant, idCour, notes, startDate} = oldNote;
+  const { _id, idEtudiant, idCour, notes, startDate } = oldNote;
 
   oldNote.history.push({ _id, idEtudiant, idCour, notes, startDate, changeDate: Date.now() })
 
-  Note.findOneAndUpdate({ idNote }, { ...req.body, history: oldNote.history }, { new: true })
+  Note.findOneAndUpdate({ idNote }, { ...req.body.note, history: oldNote.history }, { new: true })
     .then(note => {
       res.status(200).json({ message: note });
     })

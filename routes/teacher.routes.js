@@ -9,8 +9,10 @@ const Personnel = require('../models/personnel.model');
 const Cour = require('../models/cours.model');
 
 const questionnaire = require('../controllers/questionnaire.controller')
+const teacherNote = require('../controllers/teacherNote.controller')
 
 router.use('/questionnaire',questionnaire)
+router.use('/notes',teacherNote)
 
 router.get('/timetable', auth, async (req,res)=>{
   if (req.role !== "enseignant") return res.status(502).json({ error: "auth failed" })

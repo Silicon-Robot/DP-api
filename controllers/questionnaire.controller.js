@@ -129,16 +129,16 @@ router.get('/evaluation-classes-courses', auth, async function (req, res) {
   res.status(200).json({ message: { courses, classes, evaluations } })
   
 })
-router.post('/upload',upload.array('files'),(req,res)=>{
-  if(req.files){
-    let TBuffer = req.files.map(file=>file.buffer)
-    // TBuffer = Buffer.concat(TBuffer)
-    res.contentType('png')
-    console.log(TBuffer[0].toString('base64'));
-    return res.status(200).json(TBuffer[0].toString('base64'))
-  }
-  res.status(500).json({error:"failed"});
-})
+// router.post('/upload',upload.array('files'),(req,res)=>{
+//   if(req.files){
+//     let TBuffer = req.files.map(file=>file.buffer)
+//     // TBuffer = Buffer.concat(TBuffer)
+//     res.contentType('png')
+//     console.log(TBuffer[0].toString('base64'));
+//     return res.status(200).json(TBuffer[0].toString('base64'))
+//   }
+//   res.status(500).json({error:"failed"});
+// })
 router.post('/new', auth, (req, res)=>{
   if (req.role !== "enseignant") return res.status(502).json({ error: "auth failed" })
   console.log(req.body.evaluation.questions[0].refFiles)  
@@ -155,7 +155,7 @@ router.post('/new', auth, (req, res)=>{
   //   res.contentType('image/png');
   //   res.send(tBuffer)
   // })
-  const Eval = new Evaluation({...nEvaluation})
+  const Eval = new Evaluation({...nEvaluation, startDate: req.body.startDate})
   
   Eval.save()
   .then(evaluation=>res.status(200).json({message: evaluation}))

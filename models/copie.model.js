@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-
 const copieSchema = new Schema({
   idEvaluation: {
     type: String,
@@ -16,13 +15,18 @@ const copieSchema = new Schema({
     type: Number,
     require: true
   },
-  proposition: [],
+  propositions: [],
   submitted: {
     type: Boolean
   },
   startDate:{
-    type: Date,
-    require: true
+    type: Date
+  },
+  dateRemis:{
+    type: Date
+  },
+  doneMarking: {
+    type: Boolean
   },
   history: [
     {
