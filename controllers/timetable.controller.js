@@ -19,7 +19,7 @@ const Personnel = require('../models/personnel.model');
 
 
 router.get('/coordo-classes-timetables-courses-batiment-faculties-users', auth, async function (req, res) {
-  if (req.role !== "coordonnateur") return res.status(502).json({ error: "auth failed" })
+  if (req.role !== "coordonateur") return res.status(502).json({ error: "auth failed" })
   const coordos = await Coordonnateur.find()
   const courses = await Cour.find()
   const timetables = await Timetable.find()
@@ -33,7 +33,7 @@ router.get('/coordo-classes-timetables-courses-batiment-faculties-users', auth, 
 
 router.put('/update', auth, async (req,res)=>{
   console.log(req.body)
-  if (req.role !== "coordonnateur") return res.status(502).json({ error: "auth failed" })
+  if (req.role !== "coordonateur") return res.status(502).json({ error: "auth failed" })
   let { timetable, classe, matricule } = req.body;
   let oldCoordo = await Coordonnateur.findOne({matriculePersonnel: matricule}).then(coordo=>coordo);
   if (!oldCoordo) return res.status(404).json({error: "Coordo not found"});
@@ -52,7 +52,7 @@ router.put('/update', auth, async (req,res)=>{
 
 router.put('/update-publish', auth, async (req,res)=>{
   console.log(req.body)
-  if (req.role !== "coordonnateur") return res.status(502).json({ error: "auth failed" })
+  if (req.role !== "coordonateur") return res.status(502).json({ error: "auth failed" })
   let { timetable, classe, matricule } = req.body;
   let oldCoordo = await Coordonnateur.findOne({matriculePersonnel: matricule}).then(coordo=>coordo);
   let oldTimetable = await Timetable.findOne({"classe.idClasse" : classe.split(' ')[2]}).then(timetable=>timetable);

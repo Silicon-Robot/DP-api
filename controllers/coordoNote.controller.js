@@ -20,7 +20,7 @@ const Module = require('../models/module.model');
 
 router.get('/', auth, async function (req, res) {
   console.log("passing here")
-  if (req.role !== "coordonnateur") return res.status(502).json({ error: "auth failed" })
+  if (req.role !== "coordonateur") return res.status(502).json({ error: "auth failed" })
   const users = await Personnel.find()
   const courses = await Cour.find()
   const notes = await Note.find()
@@ -30,7 +30,7 @@ router.get('/', auth, async function (req, res) {
   res.status(200).json({ message: { coordos, classes, modules, users, courses, notes } })
 });
 router.put('/:idNote/publish', auth, async (req, res) => {
-  if (req.role !== "coordonnateur") return res.status(502).json({ error: "auth failed" })
+  if (req.role !== "coordonateur") return res.status(502).json({ error: "auth failed" })
   const { idNote } = req.params ;
   const oldNote = await Note.findById(idNote);
   const { _id, idEtudiant, idCour, notes, startDate } = oldNote;

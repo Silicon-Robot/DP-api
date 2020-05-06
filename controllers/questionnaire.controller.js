@@ -189,7 +189,7 @@ router.put('/:idEvaluation/update', auth, async (req, res) => {
 
 router.put('/update-publish', auth, async (req, res) => {
   console.log(req.body)
-  if (req.role !== "coordonnateur") return res.status(502).json({ error: "auth failed" })
+  if (req.role !== "coordonateur") return res.status(502).json({ error: "auth failed" })
   let { timetable, classe, matricule } = req.body;
   let oldCoordo = await Coordonnateur.findOne({ matriculePersonnel: matricule }).then(coordo => coordo);
   let oldTimetable = await Timetable.findOne({ "classe.idClasse": classe.split(' ')[2] }).then(timetable => timetable);
